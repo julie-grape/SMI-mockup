@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — TripLedger</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0f1117;--surface:#171a23;--surface2:#1e2130;--border:#2a2e3d;--border-light:#343848;
+    --text:#e2e4ec;--text-muted:#7b82a0;--text-dim:#4a5068;
+    --blue:#3b82f6;--blue-bg:rgba(59,130,246,.08);
+    --green:#22c55e;
+    --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;min-height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+
+  /* TOPBAR */
+  .topbar{display:flex;align-items:center;height:48px;background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;flex-shrink:0;}
+  .logo{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.05em;margin-right:32px;display:flex;align-items:center;gap:8px;}
+  .logo span{color:var(--blue);}
+  .nav{display:flex;gap:2px;flex:1;}
+  .ni{padding:6px 14px;border-radius:5px;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;transition:all .15s; text-decoration: none;}
+  .ni:hover,.ni.a{color:var(--text);background:var(--surface2);}
+  .tr{display:flex;align-items:center;gap:12px;margin-left:auto;}
+  .badge{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:#f59e0b;font-family:var(--mono);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+  .av{width:30px;height:30px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white;cursor:pointer;}
+
+  /* LAYOUT */
+  .main {flex:1; display:flex; overflow:hidden;}
+  
+  /* SIDEBAR SETTINGS */
+  .settings-nav {width:240px; background:var(--surface); border-right:1px solid var(--border); padding:16px 8px; display:flex; flex-direction:column; gap:4px;}
+  .sn-item {padding:10px 16px; border-radius:8px; color:var(--text-muted); cursor:pointer; font-size:13px; transition:all 0.15s; display:flex; align-items:center; gap:10px; text-decoration: none; user-select: none;}
+  .sn-item:hover {background:var(--surface2); color:var(--text);}
+  .sn-item.a {background:var(--blue-bg); color:var(--blue); font-weight:500;}
+
+  /* CONTENT SETTINGS */
+  .settings-content {flex:1; padding:40px; overflow-y:auto;}
+  .s-section {max-width:640px; margin-bottom:40px;}
+  .s-title {font-size:18px; font-weight:600; margin-bottom:8px;}
+  .s-desc {font-size:13px; color:var(--text-muted); margin-bottom:24px; line-height:1.5;}
+  
+  /* FORM ELEMENTS */
+  .form-group {margin-bottom:24px; display:flex; flex-direction:column; gap:8px;}
+  .label {font-size:12px; font-weight:600; color:var(--text); display:flex; justify-content:space-between;}
+  .label span {color:var(--text-dim); font-weight:400;}
+  
+  .ant-input {
+    padding:8px 12px; background:var(--surface2); border:1px solid var(--border); border-radius:6px;
+    color:var(--text); font-family:var(--sans); outline:none; transition:border 0.2s; width: 100%;
+  }
+  .ant-input:focus {border-color:var(--blue);}
+
+  .toggle-row {display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);}
+  .toggle {width:36px; height:20px; background:var(--border-light); border-radius:10px; position:relative; cursor:pointer; transition:all 0.2s;}
+  .toggle::after {content:''; width:16px; height:16px; background:white; border-radius:50%; position:absolute; top:2px; left:2px; transition:all 0.2s;}
+  .toggle.on {background:var(--green);}
+  .toggle.on::after {left:18px;}
+
+  .btn-save {background:var(--blue); color:white; border:none; padding:10px 24px; border-radius:6px; font-weight:600; cursor:pointer; margin-top:16px;}
+  .btn-save:hover {background:#2563eb;}
+  .btn-secondary {background:transparent; color:var(--text); border:1px solid var(--border); padding:10px 24px; border-radius:6px; font-weight:500; cursor:pointer;}
+  
+  /* TABS CSS */
+  .tab-pane { display: none; animation: fadeIn 0.3s ease; }
+  .tab-pane.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  
+  /* INTEGRATION CARDS */
+  .int-card { border:1px solid var(--border); padding:16px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; background:var(--surface2); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo"><span>◆</span> TripLedger</div>
+  <nav class="nav">
+  <a href="index.html" class="ni">Dashboard</a>
+  <a href="transactions.html" class="ni">Transactions</a>
+  <a href="tickets.html" class="ni">Tickets</a>
+  <a href="manual-review.html" class="ni">Manual Review</a>
+  <a href="reports.html" class="ni">Reports</a>
+  <a href="settings.html" class="ni a">Settings</a>
+</nav>
+  <div class="tr"><div class="badge">⏳ 14 Pending</div><div class="av">OK</div></div>
+</div>
+
+<div class="main">
+  <div class="settings-nav">
+    <div class="sn-item a" onclick="openTab('tab-general', this)">⚙️ General</div>
+    <div class="sn-item" onclick="openTab('tab-profile', this)">👤 User Profile</div>
+    <div class="sn-item" onclick="openTab('tab-ai', this)">🤖 AI Parser Settings</div>
+    <div class="sn-item" onclick="openTab('tab-integrations', this)">🔗 Integrations (API)</div>
+    <div class="sn-item" onclick="openTab('tab-security', this)">🛡️ Security & Audit</div>
+    <div class="sn-item" onclick="openTab('tab-notifications', this)">🔔 Notifications</div>
+  </div>
+
+  <div class="settings-content">
+    
+    <div id="tab-general" class="tab-pane active">
+      <div class="s-section">
+        <div class="s-title">General Settings</div>
+        <div class="s-desc">Configure the basic parameters of your TripLedger workspace.</div>
+        
+        <div class="form-group">
+          <div class="label">Workspace Name <span>ID: workspace_882</span></div>
+          <input type="text" class="ant-input" value="TripLedger Admin Panel">
+        </div>
+
+        <div class="form-group">
+          <div class="label">Base Reporting Currency</div>
+          <select class="ant-input" style="cursor:pointer;">
+            <option>EUR (€) - Euro</option>
+            <option>USD ($) - US Dollar</option>
+            <option>UAH (₴) - Ukrainian Hryvnia</option>
+          </select>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div style="font-weight:600; font-size:13px;">Auto-Matching</div>
+            <div style="font-size:12px; color:var(--text-muted);">Run the algorithm immediately after import</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+
+        <button class="btn-save" onclick="alert('Settings saved!')">Save Changes</button>
+      </div>
+    </div>
+
+    <div id="tab-profile" class="tab-pane">
+      <div class="s-section">
+        <div class="s-title">User Profile</div>
+        <div class="s-desc">Manage your personal information and account preferences.</div>
+        
+        <div style="display:flex; gap:20px; align-items:center; margin-bottom:24px;">
+          <div style="width:64px; height:64px; background:linear-gradient(135deg,#3b82f6,#8b5cf6); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:600; color:white;">OK</div>
+          <button class="btn-secondary">Upload New Avatar</button>
+        </div>
+
+        <div class="form-group">
+          <div class="label">Full Name</div>
+          <input type="text" class="ant-input" value="Oleg K.">
+        </div>
+        <div class="form-group">
+          <div class="label">Email Address</div>
+          <input type="email" class="ant-input" value="oleg.admin@tripledger.com" readonly style="opacity:0.7;">
+        </div>
+
+        <button class="btn-save" onclick="alert('Profile updated!')">Update Profile</button>
+      </div>
+    </div>
+
+    <div id="tab-ai" class="tab-pane">
+      <div class="s-section">
+        <div class="s-title">AI Parser Settings</div>
+        <div class="s-desc">Fine-tune how the machine learning model extracts data from PDFs.</div>
+        
+        <div class="form-group">
+          <div class="label">Confidence Threshold (%) <span>Current: 85%</span></div>
+          <input type="range" min="50" max="99" value="85" style="width:100%; margin-top:8px;">
+          <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Tickets below this confidence level will be sent to Manual Review.</div>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div style="font-weight:600; font-size:13px;">Auto-Learn from Manual Edits</div>
+            <div style="font-size:12px; color:var(--text-muted);">Improve extraction accuracy based on operator corrections</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div style="font-weight:600; font-size:13px;">Multi-language OCR</div>
+            <div style="font-size:12px; color:var(--text-muted);">Process tickets in non-English languages</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+
+        <button class="btn-save" onclick="alert('AI Model preferences saved.')">Save AI Settings</button>
+      </div>
+    </div>
+
+    <div id="tab-integrations" class="tab-pane">
+      <div class="s-section">
+        <div class="s-title">Integrations & API</div>
+        <div class="s-desc">Connect TripLedger with your bank accounts and email providers.</div>
+        
+        <div class="int-card">
+          <div>
+            <div style="font-weight:600; font-size:14px; margin-bottom:4px;">💳 Revolut Business</div>
+            <div style="font-size:12px; color:var(--green);">Connected • Last sync: 10 mins ago</div>
+          </div>
+          <button class="btn-secondary" style="color:var(--red); border-color:var(--red);">Disconnect</button>
+        </div>
+
+        <div class="int-card">
+          <div>
+            <div style="font-weight:600; font-size:14px; margin-bottom:4px;">📧 Gmail Integration</div>
+            <div style="font-size:12px; color:var(--green);">Connected • Auto-importing PDFs</div>
+          </div>
+          <button class="btn-secondary">Settings</button>
+        </div>
+
+        <div class="int-card">
+          <div>
+            <div style="font-weight:600; font-size:14px; margin-bottom:4px;">💬 Slack Notifications</div>
+            <div style="font-size:12px; color:var(--text-muted);">Not connected</div>
+          </div>
+          <button class="btn-primary">Connect Slack</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-security" class="tab-pane">
+      <div class="s-section">
+        <div class="s-title">Security & Audit</div>
+        <div class="s-desc">Manage account security and view access logs.</div>
+        
+        <div class="toggle-row">
+          <div>
+            <div style="font-weight:600; font-size:13px;">Two-Factor Authentication (2FA)</div>
+            <div style="font-size:12px; color:var(--text-muted);">Require an extra code from Google Authenticator to log in</div>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        
+        <div style="margin-top:24px; padding:16px; background:rgba(239, 68, 68, 0.05); border:1px solid rgba(239, 68, 68, 0.2); border-radius:8px;">
+          <div style="font-weight:600; color:var(--red); margin-bottom:8px;">Danger Zone</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Export all data or delete this workspace entirely.</div>
+          <div style="display:flex; gap:12px;">
+            <button class="btn-secondary">Export Data (CSV)</button>
+            <button class="btn-secondary" style="color:var(--red); border-color:var(--red);">Delete Workspace</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-notifications" class="tab-pane">
+      <div class="s-section">
+        <div class="s-title">Notifications</div>
+        <div class="s-desc">Choose what updates you want to receive.</div>
+        
+        <div class="toggle-row">
+          <div>
+            <div style="font-weight:600; font-size:13px;">Failed Parsings</div>
+            <div style="font-size:12px; color:var(--text-muted);">Notify when a ticket cannot be read by the AI</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div style="font-weight:600; font-size:13px;">Daily Match Summary</div>
+            <div style="font-size:12px; color:var(--text-muted);">Receive an email with stats at the end of the day</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Функція для перемикання вкладок
+  function openTab(tabId, element) {
+    // 1. Прибираємо клас 'active' з усіх контентних блоків
+    document.querySelectorAll('.tab-pane').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    
+    // 2. Прибираємо підсвітку (.a) з усіх кнопок у сайдбарі
+    document.querySelectorAll('.sn-item').forEach(btn => {
+      btn.classList.remove('a');
+    });
+    
+    // 3. Показуємо потрібний контент
+    document.getElementById(tabId).classList.add('active');
+    
+    // 4. Підсвічуємо натиснуту кнопку
+    element.classList.add('a');
+  }
+</script>
+
+</body>
+</html>
